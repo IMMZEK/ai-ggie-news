@@ -29,7 +29,7 @@ article_links = [art_elem.find_element(By.TAG_NAME, 'a').get_attribute('href') f
 if os.path.isfile("links.csv"): # check if the fils exists already
     df = pd.read_csv("links.csv")
 else:
-    df = pd.DataFrame(columns=["links"])
+    df = pd.DataFrame(columns=["links", "category", "summary"])
 
 # writer = csv.writer(article_linksCSV) # open CSV writer
 # writer.writerow(article_links) #writes separated by commas
@@ -47,11 +47,17 @@ else:
 for link in article_links:
     try: # using try except in case diver.get() doesn't work
         if link not in df["links"].values: # check if link is already in the df
-            df.loc[len(df.index)] = [link]
+            # print("Testing: " + link)
+
+            category = link.split("/")[3] # Always in the form of ['https', '', 'www.thebatt.com']
+            driver.get(link) # Go to link, slowest part of the code
+            firstParagraphText = driver.find_element(By.ID, 'article-body').find_element(By.TAG_NAME, 'p').text
+
+            df.loc[len(df.index)] = [link, category, firstParagraphText]
         # driver.get(link) # jump to the link
     except:
-        print("Unable to Find Link")
-    
+        print("Unable to Find Link: " + link)
+
 #Close the CSV file
 # article_linksCSV.close()
 # print(previousLinks)
