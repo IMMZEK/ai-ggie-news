@@ -9,7 +9,13 @@ from selenium.webdriver.chrome.options import Options
 import time
 import gensim
 
+# sql_url = "cockroachdb://AiggieNews:Kb4q6M_zb9rUOGpnHIGmyw@free-tier14.aws-us-east-1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&options=--cluster%3Ddamp-iguana-6369"
 sql_url = "cockroachdb://AiggieNews:Kb4q6M_zb9rUOGpnHIGmyw@free-tier14.aws-us-east-1.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full&options=--cluster%3Ddamp-iguana-6369"
+
+with create_engine(sql_url).connect() as conn:
+    df = pd.read_sql("SELECT * FROM articles", conn)
+    df.to_csv("articles.csv", index=False)
+    print(df)
 
 def collect():
     titles = set()
